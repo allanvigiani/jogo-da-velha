@@ -2,10 +2,12 @@ let x = document.querySelector(".x");
 let o = document.querySelector(".o");
 let board = document.querySelector("#container")
 let boxes = document.querySelectorAll(".box");
-let button = document.querySelectorAll("#buttons-container button");
+let buttons = document.querySelectorAll("#buttons-container button");
+let container = document.querySelector("#container")
 //let movePlayer = document.querySelector("#turn-player");
 let winnerMessage = document.querySelector("#winner-message");
 let messageText = document.querySelector("#winner-message p");
+let secondPlayer;
 
 
 //Contador de jogadas
@@ -29,6 +31,15 @@ for (let i = 0; i < boxes.length; i++) {
             //alterar símbolo
             if (player1 == player2) {
                 player1++;
+
+                if(secondPlayer == "ai-players") {
+                    
+                    //executar jogada
+                    aiTurn();
+                    player2++;                   
+
+                }
+
             } else {
                 player2++;
             }
@@ -37,6 +48,27 @@ for (let i = 0; i < boxes.length; i++) {
             checkWinner();
 
         }
+
+    });
+
+}
+
+//clique dos botões
+for(let i = 0; i < buttons.length; i++) {
+
+    buttons[i].addEventListener("click", function() {
+        
+        secondPlayer = this.getAttribute("id");
+
+        //esconder botões
+        for(let j = 0; j < buttons.length; j++) {
+            buttons[j].style.display = "none";
+        }
+
+        //mostrar tabuleiro
+        setTimeout(function() {
+            container.classList.remove("show");
+        }, 500)
 
     });
 
@@ -226,7 +258,7 @@ function checkWinner() {
     }
 }
 
-//
+//mostrar mensagem de vencedor
 function showWinner(winner) {
 
     //alterar placar
@@ -263,4 +295,36 @@ function showWinner(winner) {
     for(let i = 0; i < boxesToRemove.length; i++) {
         boxesToRemove[i].parentNode.removeChild(boxesToRemove[i]);
     }       
+}
+
+//jogada da AI
+function aiTurn() {
+
+    let cloneO = o.cloneNode(true);
+    counter = 0;
+    filled = 0;
+
+    for(let i  = 0; i < boxes.length; i++) {
+        
+        let randomNumber = Math.floor(Math.random() * 5);
+
+        if(boxes[i].childNodes[0] == undefined) {
+
+            if(randomNumber <= 1) {
+
+                boxes[i].appendChild(cloneO);
+                counter++;
+                break;
+
+            }
+        }else {
+            filled++;
+        }
+
+    }
+
+    if(counter == 0 && filled < 9) {
+        aiTurn();
+    }
+
 }
